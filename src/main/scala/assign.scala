@@ -114,7 +114,7 @@ object SayariAssignment {
                                          col("Passport Details").as("PassportDetails"))
 
     // Other Names column to match a column in SDN files
-    val conListJoinedNoSource = conListJoinedNoOtherNames.withColumn("OtherNames", lit(null))
+    val conListJoinedNoSource = conListJoinedNoOtherNames.withColumn("OtherNames", lit("-0-"))
 
     // Join the separate SDN files into one dataframe
     val sdn_joint = sdnDf.join(addDf, sdnDf("ent_num") === addDf("Ent_num"), "inner")
@@ -133,14 +133,14 @@ object SayariAssignment {
 
     // Create matching columns in the SDN dataframe for the Joint Schema
     // Mark these rows with the Source "SDN"
-    val sdnJoined = sdnJoinedShort.withColumn("DOB", lit(null))
-      .withColumn("Birthplace", lit(null))
-      .withColumn("Nationality", lit(null))
-      .withColumn("PassportDetails", lit(null))
+    val sdnJoined = sdnJoinedShort.withColumn("DOB", lit("-0-"))
+      .withColumn("Birthplace", lit("-0-"))
+      .withColumn("Nationality", lit("-0-"))
+      .withColumn("PassportDetails", lit("-0-"))
       .withColumn("Source", lit("SDN"))
 
     // Mark these rows with the Source "ConList"
-    val conListJoined = conListJoinedNoSource.withColumn("Source", lit("ConList"))
+    val conListJoined = conListJoinedNoSource.withColumn("Source", lit("ConList")).na.fill("-0-")
 
     // Join the two Sources into a single Dataframe
     val merged = sdnJoined.union(conListJoined).distinct()
