@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{col, lit, concat_ws, desc}
 
 object SayariAssignment {
-  val sdnHeader = Seq("ent_num",
+  val sdnHeader = Seq("sdn_ent_num",
                       "SDN_Name",
                       "SDN_Type",
                       "Program",
@@ -17,14 +17,14 @@ object SayariAssignment {
                       "Vess_owner",
                       "Remarks")
 
-  val addHeader = Seq("Ent_num",
+  val addHeader = Seq("add_ent_num",
                       "Add_num",
                       "Address",
                       "City/State/Province/PostalCode",
                       "Country",
                       "Add_remarks")
 
-  val altHeader = Seq("ent_num",
+  val altHeader = Seq("alt_ent_num",
                       "alt_num",
                       "alt_type",
                       "alt_name",
@@ -117,8 +117,8 @@ object SayariAssignment {
     val conListJoinedNoSource = conListJoinedNoOtherNames.withColumn("OtherNames", lit("-0-"))
 
     // Join the separate SDN files into one dataframe
-    val sdn_joint = sdnDf.join(addDf, sdnDf("ent_num") === addDf("Ent_num"), "inner")
-      .join(altDf, sdnDf("ent_num") === altDf("ent_num"), "inner")
+    val sdn_joint = sdnDf.join(addDf, sdnDf("sdn_ent_num") === addDf("add_ent_num"), "inner")
+      .join(altDf, sdnDf("sdn_ent_num") === altDf("alt_ent_num"), "inner")
 
     // Select the columns from the SDN combined dataframe for the Joint schema
     val sdnJoinedShort = sdn_joint.select(col("SDN_Name").as("Name"),
